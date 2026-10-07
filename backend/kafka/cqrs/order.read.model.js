@@ -340,8 +340,8 @@ class OrderReadModel {
   }
 
   /**
-   * Per-status order counts, derived from the snapshot payload stored in the
-   * single authoritative read model.
+   * Per-status order counts from the canonical status column of the single
+   * authoritative read model.
    */
   async getOrderStats() {
     const statuses = ORDER_STATUSES;
@@ -350,15 +350,6 @@ class OrderReadModel {
 
     for (const status of statuses) {
       const { count, error } = await this.client
-        .from(ORDER_READ_MODEL_TABLE)
-        .select('*', { count: 'exact', head: true })
-        .eq('payload->>status', status);
-
-      if (error) throw error;
-      stats[status] = count ?? 0;
-    }
-
-    return stats;
         .from(ORDER_READ_MODEL_TABLE)
         .select('*', { count: 'exact', head: true })
         .eq('status', status);
@@ -377,10 +368,8 @@ class OrderReadModel {
 }
 
 export default new OrderReadModel();
-export default new OrderReadModel();
 export { OrderReadModel };
 
-// ============================================================================
 // Enterprise CQRS Telemetry, Projection Metrics & Health Diagnostics (Issue #14785)
 // ============================================================================
 class OrderReadModelTelemetry {
