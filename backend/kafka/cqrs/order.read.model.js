@@ -345,6 +345,11 @@ class OrderReadModel {
    */
   async getOrderStats() {
     const statuses = ORDER_STATUSES;
+   * Per-status order counts from the canonical `status` column of the single
+   * authoritative read model (the same column getOrderList filters on).
+   */
+  async getOrderStats() {
+    const statuses = ['pending', 'truck_assigned', 'en_route_pickup', 'arrived_pickup', 'picked_up', 'in_transit', 'arriving', 'delivered', 'payment_released', 'cancelled'];
     const stats = {};
     for (const s of statuses) { stats[s] = 0; }
 
